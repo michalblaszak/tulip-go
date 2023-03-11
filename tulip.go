@@ -3,12 +3,12 @@ package tulip
 import (
 	"fmt"
 	"os"
-
-	"strconv"
 	"time"
 
+	"strconv"
+	//	"time"
+
 	"github.com/gdamore/tcell/v2"
-	"github.com/gdamore/tcell/v2/encoding"
 )
 
 type ttypedCommand int
@@ -48,10 +48,13 @@ var Desktop = TDesktop{
 		w:    10,
 		h:    10,
 	},
+    bkgColor:   tcell.ColorBlue,
+    bkgPattern: tcell.RuneBoard,
+    foreColor:  tcell.ColorWhite,
 }
 
 func InitScreen() {
-	encoding.Register()
+	// encoding.Register()
 
 	// Console initialization
 	s, e := tcell.NewScreen()
@@ -79,9 +82,9 @@ func InitScreen() {
 }
 
 func Paint() {
-	// w, h := Screen.Size()
+	w, h := Screen.Size()
 
-	Desktop.Paint()
+	Desktop.Paint(0, 0, w-1, h-1) // We pass a screen coordinates of Desktop
 
 	// midocui.EmitStr(w/2-7, h/2, tcell.StyleDefault, "Hello, Michałl!")
 	// midocui.EmitStr(w/2-9, h/2+1, tcell.StyleDefault, "Press ESC to exit.")
@@ -140,6 +143,7 @@ func (a *SApp) Run() {
 	// TODO: End remove
 
 	for {
+        // On this level we handle App level events
 		switch ev := Screen.PollEvent().(type) {
 		case *tcell.EventResize:
 			// TODO: Remove: debug
@@ -156,18 +160,19 @@ func (a *SApp) Run() {
 			var event IEvent
 
 			switch typedCommand {
-			case typedCommandNone:
+			case typedCommandNone:  // The user just types without Alt key
 				event = &EventKey{
 					Event: &Event{
 						timestamp: time.Now(),
-						processed: false,
-					},
-					Key:       ev.Key(),
-					Rune:      ev.Rune(),
-					Modifiers: ev.Modifiers(),
-				}
-				Desktop.HandleEvent(event)
-			case typedCommandUnknown: // This command is unknown to Desktop. Delegate it to the active window for potential processing
+			 			processed: false,
+			 		},
+			 		Key:       ev.Key(),
+			 		Rune:      ev.Rune(),
+			 		Modifiers: ev.Modifiers(),
+			 	}
+			 	Desktop.HandleEvent(event)
+
+			case typedCommandUnknown: // This command is unknown to App. Delegate it to Desktop for potential processing
 				event = &EventTypedCommand{
 					Event: &Event{
 						timestamp: time.Now(),
@@ -181,31 +186,35 @@ func (a *SApp) Run() {
 					a.appMode = appModeNormal
 					a.commandBuffer = ""
 				}
-			case typedCommandMove, typedCommandResize, typedCommandAppMenu:
-				event = &EventTypedCommand{
-					Event: &Event{
-						timestamp: time.Now(),
-						processed: false,
-					},
-					Command: typedCommand,
-				}
-				Desktop.HandleEvent(event)
-			case typedCommandAppQuit:
-				Screen.Fini()
-				os.Exit(0)
-			}
 
+            // case typedCommandMove, typedCommandResize, typedCommandAppMenu:
+			// 	event = &EventTypedCommand{
+			// 		Event: &Event{
+			// 			timestamp: time.Now(),
+			// 			processed: false,
+			// 		},
+			// 		Command: typedCommand,
+			// 	}
+			// 	Desktop.HandleEvent(event)
+			case typedCommandAppQuit:
+			 	Screen.Fini()
+			 	os.Exit(0)
+			} // ~TypedCommand
+
+            Desktop.SetCommandLabelText(&a.commandBuffer)
+            App.repaint = true
 			// if a.appMode == appModeTypedCommand && event.Processed() {
 			//     a.appMode = appModeNormal
 			//     a.commandBuffer = ""
 			// }
-		case *SysEventQuit:
-			Screen.Fini()
-			os.Exit(0)
-		case *AppEventCloseCurrentWin:
-			Desktop.CloseCurrentWin()
-		case *AppEventRepaint:
-			App.repaint = true
+        case *SysEventQuit:
+            Screen.Fini()
+            os.Exit(0)
+
+        // case *AppEventCloseCurrentWin:
+        //     Desktop.CloseCurrentWin()
+        case *AppEventRepaint:
+            App.repaint = true
 		}
 
 		if App.repaint {
@@ -213,11 +222,4 @@ func (a *SApp) Run() {
 			Paint()
 		}
 	}
-}
-
-// Hello returns a greeting for the named person.
-func Hello(name string) string {
-	// Return a greeting that embeds the name in a message.
-	message := fmt.Sprintf("Hi, %v. Welcome!", name)
-	return message
 }
