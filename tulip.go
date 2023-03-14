@@ -48,9 +48,9 @@ var Desktop = TDesktop{
 		w:    10,
 		h:    10,
 	},
-    bkgColor:   tcell.ColorBlue,
-    bkgPattern: tcell.RuneBoard,
-    foreColor:  tcell.ColorWhite,
+	bkgColor:   tcell.ColorBlue,
+	bkgPattern: tcell.RuneBoard,
+	foreColor:  tcell.ColorWhite,
 }
 
 func InitScreen() {
@@ -117,7 +117,7 @@ func typedCommand(ev *tcell.EventKey) ttypedCommand {
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandAppMenu
-		case "x":
+		case "X":
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandAppQuit
@@ -143,7 +143,7 @@ func (a *SApp) Run() {
 	// TODO: End remove
 
 	for {
-        // On this level we handle App level events
+		// On this level we handle App level events
 		switch ev := Screen.PollEvent().(type) {
 		case *tcell.EventResize:
 			// TODO: Remove: debug
@@ -160,17 +160,17 @@ func (a *SApp) Run() {
 			var event IEvent
 
 			switch typedCommand {
-			case typedCommandNone:  // The user just types without Alt key
+			case typedCommandNone: // The user just types without Alt key
 				event = &EventKey{
 					Event: &Event{
 						timestamp: time.Now(),
-			 			processed: false,
-			 		},
-			 		Key:       ev.Key(),
-			 		Rune:      ev.Rune(),
-			 		Modifiers: ev.Modifiers(),
-			 	}
-			 	Desktop.HandleEvent(event)
+						processed: false,
+					},
+					Key:       ev.Key(),
+					Rune:      ev.Rune(),
+					Modifiers: ev.Modifiers(),
+				}
+				Desktop.HandleEvent(event)
 
 			case typedCommandUnknown: // This command is unknown to App. Delegate it to Desktop for potential processing
 				event = &EventTypedCommand{
@@ -187,7 +187,17 @@ func (a *SApp) Run() {
 					a.commandBuffer = ""
 				}
 
-            // case typedCommandMove, typedCommandResize, typedCommandAppMenu:
+			case typedCommandAppMenu:
+				event = &EventTypedCommand{
+					Event: &Event{
+						timestamp: time.Now(),
+						processed: false,
+					},
+					Command: typedCommand,
+				}
+				Desktop.HandleEvent(event)
+
+			// case typedCommandMove, typedCommandResize, typedCommandAppMenu:
 			// 	event = &EventTypedCommand{
 			// 		Event: &Event{
 			// 			timestamp: time.Now(),
@@ -197,24 +207,24 @@ func (a *SApp) Run() {
 			// 	}
 			// 	Desktop.HandleEvent(event)
 			case typedCommandAppQuit:
-			 	Screen.Fini()
-			 	os.Exit(0)
+				Screen.Fini()
+				os.Exit(0)
 			} // ~TypedCommand
 
-            Desktop.SetCommandLabelText(&a.commandBuffer)
-            App.repaint = true
+			Desktop.SetCommandLabelText(a.commandBuffer)
+			App.repaint = true
 			// if a.appMode == appModeTypedCommand && event.Processed() {
 			//     a.appMode = appModeNormal
 			//     a.commandBuffer = ""
 			// }
-        case *SysEventQuit:
-            Screen.Fini()
-            os.Exit(0)
+		case *SysEventQuit:
+			Screen.Fini()
+			os.Exit(0)
 
-        // case *AppEventCloseCurrentWin:
-        //     Desktop.CloseCurrentWin()
-        case *AppEventRepaint:
-            App.repaint = true
+		// case *AppEventCloseCurrentWin:
+		//     Desktop.CloseCurrentWin()
+		case *AppEventRepaint:
+			App.repaint = true
 		}
 
 		if App.repaint {
@@ -222,4 +232,13 @@ func (a *SApp) Run() {
 			Paint()
 		}
 	}
+}
+
+func Repaint() {
+	appEv := &AppEventRepaint{}
+	appEv.SetEventNow()
+	if Screen == nil {
+		fmt.Println("Screen==nil")
+	}
+	_ = Screen.PostEvent(appEv)
 }

@@ -4,71 +4,70 @@ import "github.com/gdamore/tcell/v2"
 
 type StatusBar struct {
 	// NonBorderedWidget
-    region TRegion
+	region     TRegion
 	bkgColor   tcell.Color
 	bkgPattern rune
-    foreColor  tcell.Color
-    
-    // TODO: it's temporary
-    CommandLabel *Label
+	foreColor  tcell.Color
+
+	// TODO: it's temporary
+	CommandLabel *Label
 }
 
-func (s *StatusBar) erase(screenX1, screenY1, screenX2, screenY2 int, st tcell.Style, bk rune) {
-    for x := screenX1; x <= screenX2; x++ {
-        for y := screenY1; y <= screenY2; y++ {
-            Screen.SetContent(x, y, bk, nil, st)
-        }
-    }
-}
+// func (s *StatusBar) erase(screenX1, screenY1, screenX2, screenY2 int, st tcell.Style, bk rune) {
+// 	for x := screenX1; x <= screenX2; x++ {
+// 		for y := screenY1; y <= screenY2; y++ {
+// 			Screen.SetContent(x, y, bk, nil, st)
+// 		}
+// 	}
+// }
 
 func (s *StatusBar) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentScreenY2 int) {
 	// x1, _, x2, y2 := s.Widget.parent.getDeviceClientCoords(windowWithBorders)
-    // _, parentClip := s.getDeviceClientCoords(windowWithBorders)
+	// _, parentClip := s.getDeviceClientCoords(windowWithBorders)
 
-    screenX1, screenY1 := parentScreenX1 + s.region.left, parentScreenY1 + s.region.top
-    screenX2 := screenX1 + s.region.w-1
-    screenY2 := screenY1 + s.region.h-1
+	screenX1, screenY1 := parentScreenX1+s.region.left, parentScreenY1+s.region.top
+	screenX2 := screenX1 + s.region.w - 1
+	screenY2 := screenY1 + s.region.h - 1
 
-    if screenX2 > parentScreenX2 {
-        screenX2 = parentScreenX2
-    }
+	if screenX2 > parentScreenX2 {
+		screenX2 = parentScreenX2
+	}
 
-    if screenY2 > parentScreenY2 {
-        screenY2 = parentScreenY2
-    }
+	if screenY2 > parentScreenY2 {
+		screenY2 = parentScreenY2
+	}
 
-    st := tcell.StyleDefault
-    st = st.Background(s.bkgColor)
-    st = st.Foreground(s.foreColor)
-    st = st.Bold(true)
+	st := tcell.StyleDefault
+	st = st.Background(s.bkgColor)
+	st = st.Foreground(s.foreColor)
+	st = st.Bold(true)
 
-    s.erase(screenX1, screenY1, screenX2, screenY2, st, s.bkgPattern)
+	erase(screenX1, screenY1, screenX2, screenY2, st, s.bkgPattern)
 
-    if s.CommandLabel != nil {
-        s.CommandLabel.Paint(screenX1, screenY1, screenX2, screenY2)
-    }
+	if s.CommandLabel != nil {
+		s.CommandLabel.Paint(screenX1, screenY1, screenX2, screenY2)
+	}
 }
 
 func (s *StatusBar) resize(w, h int) {
-    s.region.left, s.region.top = 0, h-1
+	s.region.left, s.region.top = 0, h-1
 	s.region.w, s.region.h = w, 1
 
 	App.repaint = true
 }
 
-func (s *StatusBar) SetCommandLabelText(str *string) {
-    if s.CommandLabel != nil {
-        s.CommandLabel.SetLabel("cmd:" + *str)
-    }
+func (s *StatusBar) SetCommandLabelText(str string) {
+	if s.CommandLabel != nil {
+		s.CommandLabel.SetLabel("cmd:" + str)
+	}
 }
 
 func (s *StatusBar) CreateCommandLabel() {
-    _label := CreateLabel(s)
-    _label.SetCoords(0, 0, 10, 1)
-    _label.SetColors(tcell.ColorWhite, ' ', tcell.ColorGreen)
-    s.SetCommandLabelText(&"")
-    s.CommandLabel = _label
-
+	_label := CreateLabel(s)
+	_label.SetCoords(0, 0, 10, 1)
+	_label.SetColors(tcell.ColorWhite, ' ', tcell.ColorGreen)
+	s.CommandLabel = _label
+	s.SetCommandLabelText("")
 }
 
 // func (s *StatusBar) HandleEvent(ev IEvent) {
@@ -113,7 +112,7 @@ func (s *StatusBar) CreateCommandLabel() {
 //             x2: parentRegion.x2,
 //             y2: parentRegion.y2,
 //         }
-//     } 
+//     }
 
 //     // Adjust clipRegion
 //     if s.parent != nil {
