@@ -21,8 +21,14 @@ func main() {
 
 	_menubar := tulip.Desktop.AddMenuBar()
 
-	_menubar.AddMenuItem("File")
-	_menubar.AddMenuItem("Edit")
+	_fileMenu := _menubar.AddMenuItem("File")
+	_editMenu := _menubar.AddMenuItem("Edit")
+
+	/*_fileSubMenu :=*/
+	_fileMenu.AddSubMenu()
+
+	/*_editSubMenu :=*/
+	_editMenu.AddSubMenu()
 
 	tulip.App.Run()
 }

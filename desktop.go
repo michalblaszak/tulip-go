@@ -1,6 +1,8 @@
 package tulip
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"github.com/gdamore/tcell/v2"
+)
 
 type TDesktop struct {
 	region     TRegion
@@ -88,6 +90,10 @@ func (d *TDesktop) HandleEvent(ev IEvent) {
 			if d.menubar != nil && d.menubar.active {
 				d.menubar.HandleEvent(ev)
 			}
+		}
+	case *EventKey:
+		if d.menubar != nil && d.menubar.active {
+			d.menubar.HandleEvent(ev)
 		}
 	}
 }

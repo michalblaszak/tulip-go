@@ -1,6 +1,10 @@
 package tulip
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"fmt"
+
+	"github.com/gdamore/tcell/v2"
+)
 
 const (
 	MenuItemDefaultBkgColor          = tcell.ColorWhite
@@ -36,6 +40,18 @@ type MenuItem struct {
 	foreColorSelected tcell.Color
 
 	Action func()
+}
+
+type SubMenu struct {
+	region TRegion // will be calculated dynamically
+
+	bkgColor   tcell.Color
+	bkgPattern rune
+	foreColor  tcell.Color
+
+	menuItems []*MenuItem
+
+	active bool
 }
 
 func (m *MenuBar) AddMenuItem(label string) *MenuItem {
@@ -157,6 +173,85 @@ func (m *MenuBar) selectFirstAvailable() {
 	Repaint()
 }
 
+func (m *MenuBar) selectLastAvailable() {
+	rangeLen := len(m.menuItems) - 1
+	for i := range m.menuItems {
+		item := m.menuItems[rangeLen-i]
+		if item.enabled {
+			item.selected = true
+			break
+		}
+	}
+
+	Repaint()
+}
+
+func (m *MenuBar) getActiveMenuItem() *MenuItem {
+	if m == nil {
+		return nil
+	}
+
+	var _ret *MenuItem = nil
+
+	for _, item := range m.menuItems {
+		if item.selected {
+			_ret = item
+			break
+		}
+	}
+
+	return _ret
+}
+
+func (m *MenuBar) activateNext() {
+	selectNext := false
+	for _, item := range m.menuItems {
+		if item.selected {
+			item.selected = false
+			selectNext = true
+			continue
+		}
+		if selectNext && item.enabled {
+			item.selected = true
+			selectNext = false
+			break
+		}
+	}
+
+	// 'selectNext' remains selected if there were no more items available for selection after the previous one.
+	// We need to select the first available one (roll over)
+	if selectNext {
+		m.selectFirstAvailable()
+	}
+
+	Repaint()
+}
+
+func (m *MenuBar) activatePrevious() {
+	rangeLen := len(m.menuItems) - 1
+	selectNext := false
+	for i := range m.menuItems {
+		item := m.menuItems[rangeLen-i]
+		if item.selected {
+			item.selected = false
+			selectNext = true
+			continue
+		}
+		if selectNext && item.enabled {
+			item.selected = true
+			selectNext = false
+		}
+	}
+
+	// 'selectNext' remains selected if there were no more items available for selection before the previous one.
+	// We need to select the last available one (roll over)
+	if selectNext {
+		m.selectLastAvailable()
+	}
+
+	Repaint()
+}
+
 func (m *MenuBar) HandleEvent(ev IEvent) {
 	switch ev.(type) {
 	case *EventKey:
@@ -191,4 +286,29 @@ func (m *MenuBar) HandleEvent(ev IEvent) {
 		// case EventTypeMouse:
 		// case EventTypeConsole:
 	}
+}
+
+func (mi *MenuItem) AddSubMenu() *SubMenu {
+	_subMenu := SubMenu{
+		region: TRegion{ // will be calculated dynamically
+			top:  0,
+			left: 0,
+			w:    -1,
+			h:    -1,
+		},
+		bkgColor:   tcell.ColorWhite,
+		bkgPattern: ' ',
+		foreColor:  tcell.ColorBlack,
+		active:     false,
+	}
+
+	mi.Action = func() {
+		mi.showSubmenu(&_subMenu)
+	}
+
+	return &_subMenu
+}
+
+func (mi *MenuItem) showSubmenu(submenu *SubMenu) {
+	fmt.Println(submenu)
 }
