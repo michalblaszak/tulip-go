@@ -87,13 +87,13 @@ func erase(screenX1, screenY1, screenX2, screenY2 int, st tcell.Style, bk rune) 
 //     return b
 // }
 
-// func maxInt(a, b int) int {
-//     if (a > b) {
-//         return a
-//     }
+func maxInt(a, b int) int {
+    if (a > b) {
+        return a
+    }
 
-//     return b
-// }
+    return b
+}
 
 // // Checks if i is in [left; right]
 // func in (i, left, right int) bool {
