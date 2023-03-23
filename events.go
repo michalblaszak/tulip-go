@@ -21,6 +21,11 @@ type AppEventRepaint struct {
     tcell.EventTime
 }
 
+type AppEventDeactivateMenu struct {
+    tcell.EventTime
+}
+
+
 const (
 	EventTypeKey = iota
 	EventTypeMouse

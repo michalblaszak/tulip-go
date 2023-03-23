@@ -96,11 +96,16 @@ func typedCommand(ev *tcell.EventKey) ttypedCommand {
 	if ev.Modifiers()&tcell.ModAlt == tcell.ModAlt {
 		App.appMode = appModeTypedCommand
 
-		if ev.Key() == tcell.KeyF10 {
+        switch ev.Key() {
+		case tcell.KeyF10:
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandAppMenu
-		}
+        case tcell.KeyEnter:
+			App.appMode = appModeNormal
+			App.commandBuffer = ""
+			return typedCommandUnknown
+        }
 
 		App.commandBuffer += string(ev.Rune())
 
@@ -225,7 +230,14 @@ func (a *SApp) Run() {
 		//     Desktop.CloseCurrentWin()
 		case *AppEventRepaint:
 			App.repaint = true
+
+        case *AppEventDeactivateMenu:
+            if Desktop.menubar != nil {
+                Desktop.menubar.active = false
+                App.repaint = true
+            }
 		}
+
 
 		if App.repaint {
 			App.repaint = false
@@ -238,7 +250,16 @@ func Repaint() {
 	appEv := &AppEventRepaint{}
 	appEv.SetEventNow()
 	if Screen == nil {
-		fmt.Println("Screen==nil")
+		fmt.Println("Repaint: Screen==nil")
+	}
+	_ = Screen.PostEvent(appEv)
+}
+
+func DeactivateMenu() {
+    appEv := &AppEventDeactivateMenu{}
+	appEv.SetEventNow()
+	if Screen == nil {
+		fmt.Println("DeactivateMenu: Screen==nil")
 	}
 	_ = Screen.PostEvent(appEv)
 }

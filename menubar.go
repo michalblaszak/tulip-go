@@ -173,6 +173,7 @@ func (m *MenuBar) ToggleActive() {
 	// The menubar contains some items
 	if m.active {
 		m.active = false
+        m.reset()
 		// s.parent.setActiveWidget(nil)
 	} else {
 		m.active = true
@@ -195,29 +196,45 @@ func (m *MenuBar) ToggleActive() {
 	Repaint()
 }
 
-func (m *MenuBar) selectFirstAvailable() {
-	for _, item := range m.menuItems {
+func (m *MenuBar) reset() {
+    for _, item := range m.menuItems {
+        item.unselect()
+	}
+
+	// repaint = true
+	//Repaint()
+}
+
+func (m *MenuBar) selectFirstAvailable() *MenuItem {
+    var retItem *MenuItem = nil
+
+    for _, item := range m.menuItems {
 		if item.enabled {
 			item.selected = true
+            retItem = item
 			break
 		}
 	}
 
 	// repaint = true
 	Repaint()
+    return retItem
 }
 
-func (m *MenuBar) selectLastAvailable() {
+func (m *MenuBar) selectLastAvailable() *MenuItem {
 	rangeLen := len(m.menuItems) - 1
+    var retItem *MenuItem = nil
 	for i := range m.menuItems {
 		item := m.menuItems[rangeLen-i]
 		if item.enabled {
 			item.selected = true
+            retItem = item
 			break
 		}
 	}
 
 	Repaint()
+    return retItem
 }
 
 func (m *MenuBar) getActiveMenuItem() *MenuItem {
@@ -237,18 +254,21 @@ func (m *MenuBar) getActiveMenuItem() *MenuItem {
 	return _ret
 }
 
-func (m *MenuBar) activateNext() {
+func (m *MenuBar) activateNext() *MenuItem {
 	selectNext := false
+    var retItem *MenuItem = nil
 	for _, item := range m.menuItems {
 		if item.selected {
-			item.selected = false
-            item.closeSubMenu(false)
+            item.unselect()
+			//item.selected = false
+            // item.closeSubMenu(false)
 			selectNext = true
 			continue
 		}
 		if selectNext && item.enabled {
 			item.selected = true
 			selectNext = false
+            retItem = item
 			break
 		}
 	}
@@ -256,36 +276,49 @@ func (m *MenuBar) activateNext() {
 	// 'selectNext' remains selected if there were no more items available for selection after the previous one.
 	// We need to select the first available one (roll over)
 	if selectNext {
-		m.selectFirstAvailable()
+		retItem = m.selectFirstAvailable()
 	}
 
 	Repaint()
+    return retItem
 }
 
-func (m *MenuBar) activatePrevious() {
+func (m *MenuBar) activatePrevious() *MenuItem {
 	rangeLen := len(m.menuItems) - 1
 	selectNext := false
+    var retItem *MenuItem = nil
+
 	for i := range m.menuItems {
 		item := m.menuItems[rangeLen-i]
 		if item.selected {
-			item.selected = false
-            item.closeSubMenu(false)
+            item.unselect()
+			// item.selected = false
+            // item.closeSubMenu(false)
 			selectNext = true
 			continue
 		}
 		if selectNext && item.enabled {
 			item.selected = true
 			selectNext = false
+            retItem = item
+            break
 		}
 	}
 
 	// 'selectNext' remains selected if there were no more items available for selection before the previous one.
 	// We need to select the last available one (roll over)
 	if selectNext {
-		m.selectLastAvailable()
+		retItem = m.selectLastAvailable()
 	}
 
 	Repaint()
+    return retItem
+}
+
+func (mi *MenuItem) unselect() {
+    mi.selected = false
+    mi.closeSubMenu(false)
+    // TODO: close submenus if open
 }
 
 func (mi* MenuItem) openSubMenu() {
@@ -324,32 +357,80 @@ func (m *MenuBar) HandleEvent(ev IEvent) {
 	case *EventKey:
 		event := ev.(*EventKey)
 		switch event.Key {
-		case tcell.KeyF10: // should be already catched ib Desktop
-			m.ToggleActive()
-			event.processed = true
+		// case tcell.KeyF10: // should be already catched ib Desktop
+		// 	m.ToggleActive()    // TODO: deactivate all submenus
+		// 	event.processed = true
 		case tcell.KeyLeft:
 			if m.active {
-				m.activatePrevious()
-				event.processed = true
+				activeMenuItem := m.getActiveMenuItem()
+
+                if activeMenuItem != nil {
+                    hadSubmenuOpen := false
+                    if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
+                        hadSubmenuOpen = true
+                        activeMenuItem.submenu.HandleEvent(ev)
+                    } 
+                    
+                    if !event.processed {
+                        activeMenuItem = m.activatePrevious()
+                        if hadSubmenuOpen {
+                            activeMenuItem.openSubMenu()
+                        }
+                        event.processed = true
+                    }
+                } else {
+                    m.selectFirstAvailable()
+                    event.processed = true
+                }
 			}
 		case tcell.KeyRight:
 			if m.active {
-				m.activateNext()
-				event.processed = true
+				activeMenuItem := m.getActiveMenuItem()
+
+                if activeMenuItem != nil {
+                    hadSubmenuOpen := false
+                    if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
+                        hadSubmenuOpen = true
+                        activeMenuItem.submenu.HandleEvent(ev)
+                    } 
+                    
+                    if !event.processed {
+                        activeMenuItem = m.activateNext()
+                        if hadSubmenuOpen {
+                            activeMenuItem.openSubMenu()
+                        }
+                        event.processed = true
+                    }
+                } else {
+                    m.selectFirstAvailable()
+                    event.processed = true
+                }
 			}
 		case tcell.KeyEnter:
 			if m.active {
 				activeMenuItem := m.getActiveMenuItem()
+
 				if activeMenuItem != nil {
                     if activeMenuItem.submenu != nil {
-                        activeMenuItem.openSubMenu()
+                        if activeMenuItem.submenu.active {
+                            activeMenuItem.submenu.HandleEvent((ev))
+                        }
+                        
+                        if !event.processed {
+                            activeMenuItem.openSubMenu()
+                            event.processed = true
+                        }
                     } else 
                     if activeMenuItem.Action != nil {
 					    m.ToggleActive()
 					    activeMenuItem.Action()
+                        event.processed = true
+                    } else {
+                        event.processed = true
                     }
-				}
-				event.processed = true
+				} else {
+                    event.processed = true
+                }
 			}
 		default:
 			event.processed = true
@@ -562,7 +643,76 @@ func (m *SubMenu) activatePrevious() {
 	Repaint()
 }
 
+func (sm *SubMenu) HandleEvent(ev IEvent) {
+	switch ev.(type) {
+	case *EventKey:
+		event := ev.(*EventKey)
+		switch event.Key {
+		// case tcell.KeyF10: // should be already catched ib Desktop
+		// 	m.ToggleActive()
+		// 	event.processed = true
+		case tcell.KeyRight:
+			if sm.active {
+				activeMenuItem := sm.getActiveMenuItem()
+				if activeMenuItem != nil {
+                    if activeMenuItem.submenu != nil {
+                        activeMenuItem.openSubMenu()
+                        event.processed = true
+                    }
+				}
+			}
+		// case tcell.KeyRight:
+		// 	if m.active {
+		// 		m.activateNext()
+		// 		event.processed = true
+		// 	}
+		case tcell.KeyEnter:
+			if sm.active {
+				activeMenuItem := sm.getActiveMenuItem()
+				if activeMenuItem != nil {
+                    if activeMenuItem.submenu != nil {
+                        activeMenuItem.openSubMenu()
+                        event.processed = true
+                    } else 
+                    if activeMenuItem.Action != nil {
+					    DeactivateMenu()
+					    activeMenuItem.Action()
+                        event.processed = true
+                    }
+				}
+			}
+		default:
+			// event.processed = true
+		}
 
+		// case EventTypeMouse:
+		// case EventTypeConsole:
+	}
+}
+
+func (smi* SubMenuItem) openSubMenu() {
+    submenuHeight := 0
+    submenuWidth := 0
+ 
+    // Calculate the width and height of the submenu
+    for _, i := range  smi.submenu.menuItems {
+         submenuHeight++
+         submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
+    }
+ 
+     smi.submenu.region = TRegion{
+         left: smi.region.left + smi.region.w,
+         top: smi.region.top+1,
+         w: submenuWidth + 2,  // +2 for the frame
+         h: submenuHeight + 2, // +2 for the frame
+     }
+ 
+     smi.submenu.active = true
+     smi.submenu.selectFirstAvailable()
+ 
+     //Repaint() // Repaint is in selectFirstAvailable()
+ }
+ 
 
 
 
