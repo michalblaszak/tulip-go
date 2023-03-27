@@ -25,13 +25,19 @@ func main() {
 	_editMenu := _menubar.AddMenuItem("Edit")
 
 	_fileSubMenu := _fileMenu.AddSubMenu()
-    _fileSubMenu.AddMenuItem("Open")
-    _fileSubMenu.AddMenuItem("Save")
-    _fileSubMenu.AddMenuItem("Exit")
+	_fileSubMenu.AddMenuItem("Open")
+	_fileSubMenu.AddMenuItem("Save")
+	_fileSubMenu.AddMenuItem("Exit")
 
 	_editSubMenu := _editMenu.AddSubMenu()
-    _editSubMenu.AddMenuItem("Copy")
-    _editSubMenu.AddMenuItem("Paste")
+	_editSubMenu.AddMenuItem("Copy")
+	_editSubMenu.AddMenuItem("Paste")
+	_editMoreSubMenuItem := _editSubMenu.AddMenuItem("More")
+
+	_editMoreSubMenu := _editMoreSubMenuItem.AddSubMenu()
+	_editMoreSubMenu.AddMenuItem("Option 1")
+	_editMoreSubMenu.AddMenuItem("Option 2")
+	_editMoreSubMenu.AddMenuItem("Option 3")
 
 	tulip.App.Run()
 }

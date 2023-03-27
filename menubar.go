@@ -26,7 +26,7 @@ type MenuBar struct {
 }
 
 type MenuItem struct {
-    region            TRegion // will be calculated dynamically
+	region            TRegion // will be calculated dynamically
 	label             string
 	labelWidthCells   int
 	enabled           bool
@@ -38,7 +38,7 @@ type MenuItem struct {
 	bkgColorSelected  tcell.Color
 	foreColorSelected tcell.Color
 
-    submenu *SubMenu
+	submenu *SubMenu
 
 	Action func()
 }
@@ -56,7 +56,7 @@ type SubMenu struct {
 }
 
 type SubMenuItem struct {
-    region            TRegion // will be calculated dynamically
+	region            TRegion // will be calculated dynamically
 	label             string
 	labelWidthCells   int
 	enabled           bool
@@ -68,7 +68,7 @@ type SubMenuItem struct {
 	bkgColorSelected  tcell.Color
 	foreColorSelected tcell.Color
 
-    submenu *SubMenu
+	submenu *SubMenu
 
 	Action func()
 }
@@ -137,23 +137,23 @@ func (m *MenuBar) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentSc
 			st = st.Foreground(item.foreColor)
 		}
 
-        strlen := EmitStr(x, screenY1, screenX2, screenY2, st, " "+item.label+" ")
+		strlen := EmitStr(x, screenY1, screenX2, screenY2, st, " "+item.label+" ")
 
-        item.region = TRegion{
-            left: x,
-            top: screenY1,
-            w: strlen,
-            h: 1,
-        }
+		item.region = TRegion{
+			left: x,
+			top:  screenY1,
+			w:    strlen,
+			h:    1,
+		}
 
 		x += strlen
 
-        if item.submenu != nil && item.submenu.active {
-            item.submenu.Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentScreenY2)
-        }
+		if item.submenu != nil && item.submenu.active {
+			item.submenu.Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentScreenY2)
+		}
 	}
 
-    // Process submenus
+	// Process submenus
 }
 
 func (m *MenuBar) resize(w, h int) {
@@ -173,7 +173,7 @@ func (m *MenuBar) ToggleActive() {
 	// The menubar contains some items
 	if m.active {
 		m.active = false
-        m.reset()
+		m.reset()
 		// s.parent.setActiveWidget(nil)
 	} else {
 		m.active = true
@@ -197,8 +197,8 @@ func (m *MenuBar) ToggleActive() {
 }
 
 func (m *MenuBar) reset() {
-    for _, item := range m.menuItems {
-        item.unselect()
+	for _, item := range m.menuItems {
+		item.unselect()
 	}
 
 	// repaint = true
@@ -206,35 +206,35 @@ func (m *MenuBar) reset() {
 }
 
 func (m *MenuBar) selectFirstAvailable() *MenuItem {
-    var retItem *MenuItem = nil
+	var retItem *MenuItem = nil
 
-    for _, item := range m.menuItems {
+	for _, item := range m.menuItems {
 		if item.enabled {
 			item.selected = true
-            retItem = item
+			retItem = item
 			break
 		}
 	}
 
 	// repaint = true
 	Repaint()
-    return retItem
+	return retItem
 }
 
 func (m *MenuBar) selectLastAvailable() *MenuItem {
 	rangeLen := len(m.menuItems) - 1
-    var retItem *MenuItem = nil
+	var retItem *MenuItem = nil
 	for i := range m.menuItems {
 		item := m.menuItems[rangeLen-i]
 		if item.enabled {
 			item.selected = true
-            retItem = item
+			retItem = item
 			break
 		}
 	}
 
 	Repaint()
-    return retItem
+	return retItem
 }
 
 func (m *MenuBar) getActiveMenuItem() *MenuItem {
@@ -256,19 +256,19 @@ func (m *MenuBar) getActiveMenuItem() *MenuItem {
 
 func (m *MenuBar) activateNext() *MenuItem {
 	selectNext := false
-    var retItem *MenuItem = nil
+	var retItem *MenuItem = nil
 	for _, item := range m.menuItems {
 		if item.selected {
-            item.unselect()
+			item.unselect()
 			//item.selected = false
-            // item.closeSubMenu(false)
+			// item.closeSubMenu(false)
 			selectNext = true
 			continue
 		}
 		if selectNext && item.enabled {
 			item.selected = true
 			selectNext = false
-            retItem = item
+			retItem = item
 			break
 		}
 	}
@@ -280,28 +280,28 @@ func (m *MenuBar) activateNext() *MenuItem {
 	}
 
 	Repaint()
-    return retItem
+	return retItem
 }
 
 func (m *MenuBar) activatePrevious() *MenuItem {
 	rangeLen := len(m.menuItems) - 1
 	selectNext := false
-    var retItem *MenuItem = nil
+	var retItem *MenuItem = nil
 
 	for i := range m.menuItems {
 		item := m.menuItems[rangeLen-i]
 		if item.selected {
-            item.unselect()
+			item.unselect()
 			// item.selected = false
-            // item.closeSubMenu(false)
+			// item.closeSubMenu(false)
 			selectNext = true
 			continue
 		}
 		if selectNext && item.enabled {
 			item.selected = true
 			selectNext = false
-            retItem = item
-            break
+			retItem = item
+			break
 		}
 	}
 
@@ -312,44 +312,44 @@ func (m *MenuBar) activatePrevious() *MenuItem {
 	}
 
 	Repaint()
-    return retItem
+	return retItem
 }
 
 func (mi *MenuItem) unselect() {
-    mi.selected = false
-    mi.closeSubMenu(false)
-    // TODO: close submenus if open
+	mi.selected = false
+	mi.closeSubMenu(false)
+	// TODO: close submenus if open
 }
 
-func (mi* MenuItem) openSubMenu() {
-   submenuHeight := 0
-   submenuWidth := 0
+func (mi *MenuItem) openSubMenu() {
+	submenuHeight := 0
+	submenuWidth := 0
 
-   // Calculate the width and height of the submenu
-   for _, i := range  mi.submenu.menuItems {
-        submenuHeight++
-        submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
-   }
+	// Calculate the width and height of the submenu
+	for _, i := range mi.submenu.menuItems {
+		submenuHeight++
+		submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
+	}
 
-    mi.submenu.region = TRegion{
-        left: mi.region.left,
-        top: mi.region.top+1,
-        w: submenuWidth + 2,  // +2 for the frame
-        h: submenuHeight + 2, // +2 for the frame
-    }
+	mi.submenu.region = TRegion{
+		left: mi.region.left,
+		top:  mi.region.top + 1,
+		w:    submenuWidth + 2,  // +2 for the frame
+		h:    submenuHeight + 2, // +2 for the frame
+	}
 
-    mi.submenu.active = true
-    mi.submenu.selectFirstAvailable()
+	mi.submenu.active = true
+	mi.submenu.selectFirstAvailable()
 
-    //Repaint() // Repaint is in selectFirstAvailable()
+	//Repaint() // Repaint is in selectFirstAvailable()
 }
 
-func (mi *MenuItem) closeSubMenu(withRepaint bool) {    
-    mi.submenu.active = false
+func (mi *MenuItem) closeSubMenu(withRepaint bool) {
+	mi.submenu.active = false
 
-    if withRepaint {
-        Repaint()
-    }
+	if withRepaint {
+		Repaint()
+	}
 }
 
 func (m *MenuBar) HandleEvent(ev IEvent) {
@@ -364,73 +364,72 @@ func (m *MenuBar) HandleEvent(ev IEvent) {
 			if m.active {
 				activeMenuItem := m.getActiveMenuItem()
 
-                if activeMenuItem != nil {
-                    hadSubmenuOpen := false
-                    if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
-                        hadSubmenuOpen = true
-                        activeMenuItem.submenu.HandleEvent(ev)
-                    } 
-                    
-                    if !event.processed {
-                        activeMenuItem = m.activatePrevious()
-                        if hadSubmenuOpen {
-                            activeMenuItem.openSubMenu()
-                        }
-                        event.processed = true
-                    }
-                } else {
-                    m.selectFirstAvailable()
-                    event.processed = true
-                }
+				if activeMenuItem != nil {
+					hadSubmenuOpen := false
+					if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
+						hadSubmenuOpen = true
+						activeMenuItem.submenu.HandleEvent(ev)
+					}
+
+					if !event.processed {
+						activeMenuItem = m.activatePrevious()
+						if hadSubmenuOpen {
+							activeMenuItem.openSubMenu()
+						}
+						event.processed = true
+					}
+				} else {
+					m.selectFirstAvailable()
+					event.processed = true
+				}
 			}
 		case tcell.KeyRight:
 			if m.active {
 				activeMenuItem := m.getActiveMenuItem()
 
-                if activeMenuItem != nil {
-                    hadSubmenuOpen := false
-                    if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
-                        hadSubmenuOpen = true
-                        activeMenuItem.submenu.HandleEvent(ev)
-                    } 
-                    
-                    if !event.processed {
-                        activeMenuItem = m.activateNext()
-                        if hadSubmenuOpen {
-                            activeMenuItem.openSubMenu()
-                        }
-                        event.processed = true
-                    }
-                } else {
-                    m.selectFirstAvailable()
-                    event.processed = true
-                }
+				if activeMenuItem != nil {
+					hadSubmenuOpen := false
+					if activeMenuItem.submenu != nil && activeMenuItem.submenu.active {
+						hadSubmenuOpen = true
+						activeMenuItem.submenu.HandleEvent(ev)
+					}
+
+					if !event.processed {
+						activeMenuItem = m.activateNext()
+						if hadSubmenuOpen {
+							activeMenuItem.openSubMenu()
+						}
+						event.processed = true
+					}
+				} else {
+					m.selectFirstAvailable()
+					event.processed = true
+				}
 			}
 		case tcell.KeyEnter:
 			if m.active {
 				activeMenuItem := m.getActiveMenuItem()
 
 				if activeMenuItem != nil {
-                    if activeMenuItem.submenu != nil {
-                        if activeMenuItem.submenu.active {
-                            activeMenuItem.submenu.HandleEvent((ev))
-                        }
-                        
-                        if !event.processed {
-                            activeMenuItem.openSubMenu()
-                            event.processed = true
-                        }
-                    } else 
-                    if activeMenuItem.Action != nil {
-					    m.ToggleActive()
-					    activeMenuItem.Action()
-                        event.processed = true
-                    } else {
-                        event.processed = true
-                    }
+					if activeMenuItem.submenu != nil {
+						if activeMenuItem.submenu.active {
+							activeMenuItem.submenu.HandleEvent((ev))
+						}
+
+						if !event.processed {
+							activeMenuItem.openSubMenu()
+							event.processed = true
+						}
+					} else if activeMenuItem.Action != nil {
+						m.ToggleActive()
+						activeMenuItem.Action()
+						event.processed = true
+					} else {
+						event.processed = true
+					}
 				} else {
-                    event.processed = true
-                }
+					event.processed = true
+				}
 			}
 		default:
 			event.processed = true
@@ -455,7 +454,26 @@ func (mi *MenuItem) AddSubMenu() *SubMenu {
 		active:     false,
 	}
 
-    mi.submenu = &_subMenu
+	mi.submenu = &_subMenu
+
+	return &_subMenu
+}
+
+func (smi *SubMenuItem) AddSubMenu() *SubMenu {
+	_subMenu := SubMenu{
+		region: TRegion{ // will be calculated dynamically
+			top:  0,
+			left: 0,
+			w:    -1,
+			h:    -1,
+		},
+		bkgColor:   tcell.ColorWhite,
+		bkgPattern: ' ',
+		foreColor:  tcell.ColorBlack,
+		active:     false,
+	}
+
+	smi.submenu = &_subMenu
 
 	return &_subMenu
 }
@@ -482,17 +500,17 @@ func (sm *SubMenu) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentS
 
 	erase(screenX1, screenY1, screenX2, screenY2, st, sm.bkgPattern)
 
-    // Draw top border
-    Screen.SetContent(screenX1, screenY1, BoxDrawingsLightDownAndRight, nil, st) // left-top corner
-    Screen.SetContent(screenX2, screenY1, BoxDrawingsLightDownAndLeft, nil, st) // right-top corner
+	// Draw top border
+	Screen.SetContent(screenX1, screenY1, BoxDrawingsLightDownAndRight, nil, st) // left-top corner
+	Screen.SetContent(screenX2, screenY1, BoxDrawingsLightDownAndLeft, nil, st)  // right-top corner
 
-    Screen.SetContent(screenX1, screenY2, BoxDrawingsLightUpAndRight, nil, st) // left-bottom corner
-    Screen.SetContent(screenX2, screenY2, BoxDrawingsLightUpAndLeft, nil, st) // right-bottom corner
-    
-    for x := 1; x < sm.region.w-1; x++ {    // 1 and -1 as corners are drawn above
-        Screen.SetContent(screenX1 + x, screenY1, BoxDrawingsLightHorizontal, nil, st)
-        Screen.SetContent(screenX1 + x, screenY2, BoxDrawingsLightHorizontal, nil, st)
-    }
+	Screen.SetContent(screenX1, screenY2, BoxDrawingsLightUpAndRight, nil, st) // left-bottom corner
+	Screen.SetContent(screenX2, screenY2, BoxDrawingsLightUpAndLeft, nil, st)  // right-bottom corner
+
+	for x := 1; x < sm.region.w-1; x++ { // 1 and -1 as corners are drawn above
+		Screen.SetContent(screenX1+x, screenY1, BoxDrawingsLightHorizontal, nil, st)
+		Screen.SetContent(screenX1+x, screenY2, BoxDrawingsLightHorizontal, nil, st)
+	}
 	// Draw menu items
 	st_item := tcell.StyleDefault
 	y := screenY1
@@ -511,11 +529,11 @@ func (sm *SubMenu) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentS
 			st_item = st_item.Background(item.bkgColor)
 			st_item = st_item.Foreground(item.foreColor)
 		}
-        Screen.SetContent(screenX1, y+1, BoxDrawingsLightVertical, nil, st) // left-border
-        Screen.SetContent(screenX2, y+1, BoxDrawingsLightVertical, nil, st) // right-border
+		Screen.SetContent(screenX1, y+1, BoxDrawingsLightVertical, nil, st) // left-border
+		Screen.SetContent(screenX2, y+1, BoxDrawingsLightVertical, nil, st) // right-border
 
-        EmitStr(screenX1+1, y+1, screenX2-1, y+1, st_item, item.getPrintableLabel()) // +1 for the border
-        y++
+		EmitStr(screenX1+1, y+1, screenX2-1, y+1, st_item, item.getPrintableLabel()) // +1 for the border
+		y++
 	}
 }
 
@@ -542,11 +560,11 @@ func (m *SubMenu) AddMenuItem(label string) *SubMenuItem {
 }
 
 func (smi *SubMenuItem) getPrintableLabel() string {
-    commandIcon := ""
-    if smi.submenu != nil {
-        commandIcon = " " + string(BlackRightPointingTriangle)
-    }
-    return smi.label + commandIcon
+	commandIcon := ""
+	if smi.submenu != nil {
+		commandIcon = " " + string(BlackRightPointingTriangle)
+	}
+	return smi.label + commandIcon
 }
 
 // TODO: Make it generic (same as for MenuBar)
@@ -655,10 +673,10 @@ func (sm *SubMenu) HandleEvent(ev IEvent) {
 			if sm.active {
 				activeMenuItem := sm.getActiveMenuItem()
 				if activeMenuItem != nil {
-                    if activeMenuItem.submenu != nil {
-                        activeMenuItem.openSubMenu()
-                        event.processed = true
-                    }
+					if activeMenuItem.submenu != nil {
+						activeMenuItem.openSubMenu()
+						event.processed = true
+					}
 				}
 			}
 		// case tcell.KeyRight:
@@ -670,15 +688,14 @@ func (sm *SubMenu) HandleEvent(ev IEvent) {
 			if sm.active {
 				activeMenuItem := sm.getActiveMenuItem()
 				if activeMenuItem != nil {
-                    if activeMenuItem.submenu != nil {
-                        activeMenuItem.openSubMenu()
-                        event.processed = true
-                    } else 
-                    if activeMenuItem.Action != nil {
-					    DeactivateMenu()
-					    activeMenuItem.Action()
-                        event.processed = true
-                    }
+					if activeMenuItem.submenu != nil {
+						activeMenuItem.openSubMenu()
+						event.processed = true
+					} else if activeMenuItem.Action != nil {
+						DeactivateMenu()
+						activeMenuItem.Action()
+						event.processed = true
+					}
 				}
 			}
 		default:
@@ -690,32 +707,28 @@ func (sm *SubMenu) HandleEvent(ev IEvent) {
 	}
 }
 
-func (smi* SubMenuItem) openSubMenu() {
-    submenuHeight := 0
-    submenuWidth := 0
- 
-    // Calculate the width and height of the submenu
-    for _, i := range  smi.submenu.menuItems {
-         submenuHeight++
-         submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
-    }
- 
-     smi.submenu.region = TRegion{
-         left: smi.region.left + smi.region.w,
-         top: smi.region.top+1,
-         w: submenuWidth + 2,  // +2 for the frame
-         h: submenuHeight + 2, // +2 for the frame
-     }
- 
-     smi.submenu.active = true
-     smi.submenu.selectFirstAvailable()
- 
-     //Repaint() // Repaint is in selectFirstAvailable()
- }
- 
+func (smi *SubMenuItem) openSubMenu() {
+	submenuHeight := 0
+	submenuWidth := 0
 
+	// Calculate the width and height of the submenu
+	for _, i := range smi.submenu.menuItems {
+		submenuHeight++
+		submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
+	}
 
+	smi.submenu.region = TRegion{
+		left: smi.region.left + smi.region.w,
+		top:  smi.region.top + 1,
+		w:    submenuWidth + 2,  // +2 for the frame
+		h:    submenuHeight + 2, // +2 for the frame
+	}
 
+	smi.submenu.active = true
+	smi.submenu.selectFirstAvailable()
+
+	//Repaint() // Repaint is in selectFirstAvailable()
+}
 
 func (smi *SubMenuItem) Paint() {
 

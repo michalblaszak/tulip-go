@@ -96,29 +96,29 @@ func typedCommand(ev *tcell.EventKey) ttypedCommand {
 	if ev.Modifiers()&tcell.ModAlt == tcell.ModAlt {
 		App.appMode = appModeTypedCommand
 
-        switch ev.Key() {
+		switch ev.Key() {
 		case tcell.KeyF10:
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandAppMenu
-        case tcell.KeyEnter:
+		case tcell.KeyEnter:
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandUnknown
-        }
+		}
 
 		App.commandBuffer += string(ev.Rune())
 
 		switch App.commandBuffer {
-		case "resize":
+		case "RESIZE":
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandResize
-		case "move":
+		case "MOVE":
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandMove
-		case "menu":
+		case "MENU":
 			App.appMode = appModeNormal
 			App.commandBuffer = ""
 			return typedCommandAppMenu
@@ -231,13 +231,12 @@ func (a *SApp) Run() {
 		case *AppEventRepaint:
 			App.repaint = true
 
-        case *AppEventDeactivateMenu:
-            if Desktop.menubar != nil {
-                Desktop.menubar.active = false
-                App.repaint = true
-            }
+		case *AppEventDeactivateMenu:
+			if Desktop.menubar != nil {
+				Desktop.menubar.active = false
+				App.repaint = true
+			}
 		}
-
 
 		if App.repaint {
 			App.repaint = false
@@ -256,7 +255,7 @@ func Repaint() {
 }
 
 func DeactivateMenu() {
-    appEv := &AppEventDeactivateMenu{}
+	appEv := &AppEventDeactivateMenu{}
 	appEv.SetEventNow()
 	if Screen == nil {
 		fmt.Println("DeactivateMenu: Screen==nil")

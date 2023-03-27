@@ -198,3 +198,88 @@ const (
 	RightwardsHeavyArrow rune = '\U0001F846' // 🡆 RIGHTWARDS HEAVY ARROW
 	DownwardsHeavyArrow  rune = '\U0001F847' // 🡇 DOWNWARDS HEAVY ARROW
 )
+
+// From Miscellaneous Technica https://www.unicode.org/charts/PDF/U2300.pdf
+const (
+	House                    rune = '\u2302'     // ⌂ HOUSE
+	UpArrowHead              rune = '\u2303'     // ⌃ UP ARROWHEAD
+	DownArrowHead            rune = '\u2304'     // ⌄ DOWN ARROWHEAD
+	ViewDataSquare           rune = '\u2317'     // ⌗ VIEWDATA SQUARE
+	PlaceOfInterestSig       rune = '\u2318'     // ⌘ PLACE OF INTEREST SIG
+	Watch                    rune = '\u231A'     // ⌚ WATCH
+	AlarmClock               rune = '\u23F0'     // ⏰ alarm clock
+	Hourglass                rune = '\u231B'     // ⌛ HOURGLASS
+	ClockFaceOneOclock1      rune = '\uF550'     // 🕐 clock face one oclock
+	MantelPieceClock         rune = '\U0001F570' // 🕰 mantelpiece clock
+	Stopwatch                rune = '\u23F1'     // ⏱ STOPWATCH
+	TimerClock               rune = '\u23F2'     // ⏲ TIMER CLOCK
+	HourglassWithFlowingSand rune = '\u23F3'     // ⏳ HOURGLASS WITH FLOWING SAND
+
+	TopHalfIntegral    rune = '\u2320' // ⌠ TOP HALF INTEGRAL
+	IntegralExtension  rune = '\u23AE' // ⎮ integral extension
+	BottomHalfIntegral rune = '\u2321' // ⌡ BOTTOM HALF INTEGRAL
+
+	EraseToTheRight rune = '\u2326' // ⌦ ERASE TO THE RIGHT
+	EraseToTheLeft  rune = '\u232B' // ⌫ ERASE TO THE LEFT
+
+	XInARectangleBox rune = '\u2327' // ⌧ X IN A RECTANGLE BOX
+	BallotBoxWithX   rune = '\u2612' // ☒ ballot box with x
+
+	Keyboard         rune = '\u2328'     // ⌨ KEYBOARD
+	KeyboardAndMouse rune = '\U0001F5A6' // 🖦 keyboard and mouse
+	WiredKeyboard    rune = '\U0001F5AE' // 🖮 wired keyboard
+
+	LeftParenthesisUpperHook                 rune = '\u239B' // ⎛ LEFT PARENTHESIS UPPER HOOK
+	LeftParenthesisExtension                 rune = '\u239C' // ⎜ LEFT PARENTHESIS EXTENSION
+	LeftParenthesisLowrHook                  rune = '\u239D' // ⎝ LEFT PARENTHESIS LOWER HOOK
+	RightParenthesisUpperHook                rune = '\u239E' // ⎞ RIGHT PARENTHESIS UPPER HOOK
+	RightParenthesisExtension                rune = '\u239F' // ⎟ RIGHT PARENTHESIS EXTENSION
+	RightParenthesisLowerHook                rune = '\u23A0' // ⎠ RIGHT PARENTHESIS LOWER HOOK
+	LeftSquareBracketUpperCorner             rune = '\u23A1' // ⎡ LEFT SQUARE BRACKET UPPER CORNER
+	LeftSquareBracketExtension               rune = '\u23A2' // ⎢ LEFT SQUARE BRACKET EXTENSION
+	LeftSquareBracketLowerCorner             rune = '\u23A3' // ⎣ LEFT SQUARE BRACKET LOWER CORNER
+	RightSquareBracketUpperCorner            rune = '\u23A4' // ⎤ RIGHT SQUARE BRACKET UPPER CORNER
+	RightSquareBracketExtension              rune = '\u23A5' // ⎥ RIGHT SQUARE BRACKET EXTENSION
+	RightSquareBracketLowerCorner            rune = '\u23A6' // ⎦ RIGHT SQUARE BRACKET LOWER CORNER
+	LeftCurlyBracketUpperHook                rune = '\u23A7' // ⎧ LEFT CURLY BRACKET UPPER HOOK
+	LeftCurlyBracketMiddlePiece              rune = '\u23A8' // ⎨ LEFT CURLY BRACKET MIDDLE PIECE
+	LeftCurlyBracketLowerHook                rune = '\u23A9' // ⎩ LEFT CURLY BRACKET LOWER HOOK
+	CurlyBracketExtension                    rune = '\u23AA' // ⎪ CURLY BRACKET EXTENSION
+	RightCurlyBracketUpperHook               rune = '\u23AB' // ⎫ RIGHT CURLY BRACKET UPPER HOOK
+	RightCurlyBracketMiddlePiece             rune = '\u23AC' // ⎬ RIGHT CURLY BRACKET MIDDLE PIECE
+	RightCurlyBracketLowerHook               rune = '\u23AD' // ⎭ RIGHT CURLY BRACKET LOWER HOOK
+	UpperLeftOrLowerRightCurlyBracketSection rune = '\u23B0' // ⎰ UPPER LEFT OR LOWER RIGHT CURLY BRACKET SECTION
+	UpperRightOrLowerLeftCurlyBracketSection rune = '\u23B1' // ⎱ UPPER RIGHT OR LOWER LEFT CURLY BRACKET SECTION
+
+	ReturnSymbol                                    rune = '\u23CE'     // ⏎ RETURN SYMBOL
+	EjectSymbol                                     rune = '\u23CF'     // ⏏ EJECT SYMBOL
+	BlackRightPointingDoubleTriangle                rune = '\u23E9'     // ⏩ BLACK RIGHT-POINTING DOUBLE TRIANGLE
+	BlackLeftPointintDoubleTriangle                 rune = '\u23EA'     // ⏪ BLACK LEFT-POINTING DOUBLE TRIANGLE
+	BlackUpPointingDoubleTriangle                   rune = '\u23EB'     // ⏫ BLACK UP-POINTING DOUBLE TRIANGLE
+	BlackDownPointingDoubleTriangle                 rune = '\u23EC'     // ⏬ BLACK DOWN-POINTING DOUBLE TRIANGLE
+	BlackRightPointingDoubleTriangleWithVerticalBar rune = '\u23ED'     // ⏭ BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR
+	BlackLeftPointingDoubleTriangleWithVerticalBar  rune = '\u23EE'     // ⏮ BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR
+	BlackRightPointingTriangleWithDoubleVerticalBar rune = '\u23EF'     // ⏯ BLACK RIGHT-POINTING TRIANGLE WITH DOUBLE VERTICAL BAR
+	BlackMediumLeftPointingTriangle                 rune = '\u23F4'     // ⏴ BLACK MEDIUM LEFT-POINTING TRIANGLE
+	BlackMediumLeftPointingTriangleCentered         rune = '\u2BC7'     // ⯇ black medium left-pointing triangle centred
+	BlackLeftPointingIsoscelesRightTriangle         rune = '\U0001F780' // 🞀 black left-pointing isosceles right triangle
+	BlackMediumRightPointingTriangle                rune = '\u23F5'     // ⏵ BLACK MEDIUM RIGHT-POINTING TRIANGLE
+	BlackMediumRightPointingTriangleCentered        rune = '\u2BC8'     // ⯈ black medium right-pointing triangle centred
+	BlackRightPointingIsoscelesRightTriangle        rune = '\U0001F782' // 🞂 black right-pointing isosceles right triangle
+	BlackMediumUpPointingTriangle                   rune = '\u23F6'     // ⏶ BLACK MEDIUM UP-POINTING TRIANGLE
+	BlackMediumUpPointingTriangleCentered           rune = '\u2BC5'     // ⯅ black medium up-pointing triangle centred
+	BlackUpPointingIsoscelesTriangle                rune = '\U0001F781' // 🞁 black up-pointing isosceles right triangle
+	BlackMediumDownPointingTriangle                 rune = '\u23F7'     // ⏷ BLACK MEDIUM DOWN-POINTING TRIANGLE
+	BlackMediumDownPointingTriangleCentered         rune = '\u2BC6'     // ⯆ black medium down-pointing triangle centred
+	BlackDownPointingIsoscelesRightTriangle         rune = '\U0001F783' // 🞃 black down-pointing isosceles right triangle
+
+	DoubleVerticalBar    rune = '\u23F8'     // ⏸ DOUBLE VERTICAL BAR
+	DoubeVerticalLine    rune = '\u2016'     // ‖ double vertical line
+	BlackSquareForStop   rune = '\u23F9'     // ⏹ BLACK SQUARE FOR STOP
+	BlackMediumSquare    rune = '\u25FC'     // ◼ black medium square
+	BlackCircleForRecord rune = '\u23FA'     // ⏺ BLACK CIRCLE FOR RECORD
+	MediumBlackCircle    rune = '\u26AB'     // ⚫ medium black circle
+	LargeRedCircle       rune = '\U0001F534' // 🔴 large red circle
+	PowerSymbol          rune = '\u23FB'     // ⏻ POWER SYMBOL
+	PowerOnOffSymbol     rune = '\u23FC'     // ⏼ POWER ON-OFF SYMBOL
+)
