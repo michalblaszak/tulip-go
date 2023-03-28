@@ -1,6 +1,8 @@
 package tulip
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -11,6 +13,10 @@ const (
 	MenuItemDefaultForeColorDisabled = tcell.ColorGray
 	MenuItemDefaultBkgColorSelected  = tcell.ColorBlack
 	MenuItemDefaultForeColorSelected = tcell.ColorWhite
+)
+
+const (
+    submenuExpandIcon = BlackRightPointingTriangle
 )
 
 type MenuBar struct {
@@ -57,7 +63,8 @@ type SubMenu struct {
 
 type SubMenuItem struct {
 	region            TRegion // will be calculated dynamically
-	label             string
+	label             string // the label as declared
+    labelDisplay      string // the label to be displayed
 	labelWidthCells   int
 	enabled           bool
 	selected          bool
@@ -322,26 +329,50 @@ func (mi *MenuItem) unselect() {
 }
 
 func (mi *MenuItem) openSubMenu() {
-	submenuHeight := 0
-	submenuWidth := 0
-
-	// Calculate the width and height of the submenu
-	for _, i := range mi.submenu.menuItems {
-		submenuHeight++
-		submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
-	}
-
 	mi.submenu.region = TRegion{
 		left: mi.region.left,
 		top:  mi.region.top + 1,
-		w:    submenuWidth + 2,  // +2 for the frame
-		h:    submenuHeight + 2, // +2 for the frame
+		// w:    will be udjusted in the adjustItems()
+		// h:    will be udjusted in the adjustItems()
 	}
+
+    mi.submenu.adjustItems()
 
 	mi.submenu.active = true
 	mi.submenu.selectFirstAvailable()
 
 	//Repaint() // Repaint is in selectFirstAvailable()
+}
+
+func (sm *SubMenu) adjustItems() {
+	submenuHeight := 2 // 2 for the frame
+	submenuWidth := 0
+    hasSubmenu := false
+
+    for _, i := range sm.menuItems {
+		submenuHeight++
+		submenuWidth = maxInt(submenuWidth, StrCellWidth(i.label))
+        if i.submenu != nil {
+            hasSubmenu = true
+        }
+	}
+
+    if hasSubmenu {
+        submenuWidth += 1+StrCellWidth(string(submenuExpandIcon)) // +1 for space
+    }
+
+    // Add trailing spaces and submenu expand icon to the items which need it
+    for _, i := range sm.menuItems {
+        if i.submenu == nil {
+            i.labelDisplay = fmt.Sprintf("%-*s", submenuWidth, i.label)
+        } else {
+            numSpaces := submenuWidth - 1 // 1 for expand icon
+            i.labelDisplay = fmt.Sprintf("%-*s%s", numSpaces, i.label, string(submenuExpandIcon))
+        }
+	}
+
+    sm.region.w = submenuWidth + 2 // 2 for the frame
+    sm.region.h = submenuHeight
 }
 
 func (mi *MenuItem) closeSubMenu(withRepaint bool) {
@@ -532,7 +563,7 @@ func (sm *SubMenu) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentS
 		Screen.SetContent(screenX1, y+1, BoxDrawingsLightVertical, nil, st) // left-border
 		Screen.SetContent(screenX2, y+1, BoxDrawingsLightVertical, nil, st) // right-border
 
-		EmitStr(screenX1+1, y+1, screenX2-1, y+1, st_item, item.getPrintableLabel()) // +1 for the border
+		EmitStr(screenX1+1, y+1, screenX2-1, y+1, st_item, item.labelDisplay) // +1 for the border
 		y++
 	}
 }
@@ -540,6 +571,7 @@ func (sm *SubMenu) Paint(parentScreenX1, parentScreenY1, parentScreenX2, parentS
 func (m *SubMenu) AddMenuItem(label string) *SubMenuItem {
 	_menuItem := SubMenuItem{
 		label:             label,
+        labelDisplay:      "",
 		enabled:           true,
 		selected:          false,
 		labelWidthCells:   StrCellWidth(label),
@@ -559,13 +591,13 @@ func (m *SubMenu) AddMenuItem(label string) *SubMenuItem {
 	return &_menuItem
 }
 
-func (smi *SubMenuItem) getPrintableLabel() string {
-	commandIcon := ""
-	if smi.submenu != nil {
-		commandIcon = " " + string(BlackRightPointingTriangle)
-	}
-	return smi.label + commandIcon
-}
+// func (smi *SubMenuItem) getPrintableLabel() string {
+// 	commandIcon := ""
+// 	if smi.submenu != nil {
+// 		commandIcon = " " + string(BlackRightPointingTriangle /*BlackMediumRightPointingTriangleCentered*/)
+// 	}
+// 	return smi.label + commandIcon
+// }
 
 // TODO: Make it generic (same as for MenuBar)
 func (m *SubMenu) selectFirstAvailable() {
@@ -708,21 +740,14 @@ func (sm *SubMenu) HandleEvent(ev IEvent) {
 }
 
 func (smi *SubMenuItem) openSubMenu() {
-	submenuHeight := 0
-	submenuWidth := 0
-
-	// Calculate the width and height of the submenu
-	for _, i := range smi.submenu.menuItems {
-		submenuHeight++
-		submenuWidth = maxInt(submenuWidth, StrCellWidth(i.getPrintableLabel()))
-	}
-
 	smi.submenu.region = TRegion{
 		left: smi.region.left + smi.region.w,
 		top:  smi.region.top + 1,
-		w:    submenuWidth + 2,  // +2 for the frame
-		h:    submenuHeight + 2, // +2 for the frame
+		// w:    will be udjusted in the adjustItems()
+		// h:    will be udjusted in the adjustItems()
 	}
+
+    smi.submenu.adjustItems()
 
 	smi.submenu.active = true
 	smi.submenu.selectFirstAvailable()

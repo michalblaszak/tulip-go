@@ -1,5 +1,7 @@
 package tulip
 
+// Win console font: Cascadia Code
+
 const (
 	// Block: General Punctation U+2000-U+206F (http://unicode.org/charts/PDF/U2000.pdf)
 	SemigraphicsHorizontalEllipsis rune = '\u2026' // …
@@ -186,7 +188,7 @@ const (
 	BlackUpperLeftTriangle        rune = '\u25E4' // ◤ BLACK UPPER LEFT TRIANGLE  → 1FB9C 🮜  upper left triangular medium shade
 	BlackUpperRighttTriangle      rune = '\u25E5' // ◥ BLACK UPPER RIGHT TRIANGLE → 1FB9D �
 	BlackUpPointingTriangle       rune = '\u25B2' // ▲ BLACK UP-POINTING TRIANGLE
-	BlackRightPointingTriangle    rune = '\u25B6' // ▶ BLACK RIGHT-POINTING TRIANGLE
+	BlackRightPointingTriangle    rune = '\u25B6' // ▶ BLACK RIGHT-POINTING TRIANGLE                
 	BlackDownPointingTriangle     rune = '\u25BC' // ▼ BLACK DOWN-POINTING TRIANGLE
 	BlackLeftPointingTriangle     rune = '\u25C0' // ◀ BLACK LEFT-POINTING TRIANGLE
 )
@@ -263,9 +265,9 @@ const (
 	BlackMediumLeftPointingTriangle                 rune = '\u23F4'     // ⏴ BLACK MEDIUM LEFT-POINTING TRIANGLE
 	BlackMediumLeftPointingTriangleCentered         rune = '\u2BC7'     // ⯇ black medium left-pointing triangle centred
 	BlackLeftPointingIsoscelesRightTriangle         rune = '\U0001F780' // 🞀 black left-pointing isosceles right triangle
-	BlackMediumRightPointingTriangle                rune = '\u23F5'     // ⏵ BLACK MEDIUM RIGHT-POINTING TRIANGLE
-	BlackMediumRightPointingTriangleCentered        rune = '\u2BC8'     // ⯈ black medium right-pointing triangle centred
-	BlackRightPointingIsoscelesRightTriangle        rune = '\U0001F782' // 🞂 black right-pointing isosceles right triangle
+	BlackMediumRightPointingTriangle                rune = '\u23F5'     // ⏵ BLACK MEDIUM RIGHT-POINTING TRIANGLE                       
+	BlackMediumRightPointingTriangleCentered        rune = '\u2BC8'     // ⯈ black medium right-pointing triangle centred               
+	BlackRightPointingIsoscelesRightTriangle        rune = '\U0001F782' // 🞂 black right-pointing isosceles right triangle              
 	BlackMediumUpPointingTriangle                   rune = '\u23F6'     // ⏶ BLACK MEDIUM UP-POINTING TRIANGLE
 	BlackMediumUpPointingTriangleCentered           rune = '\u2BC5'     // ⯅ black medium up-pointing triangle centred
 	BlackUpPointingIsoscelesTriangle                rune = '\U0001F781' // 🞁 black up-pointing isosceles right triangle
